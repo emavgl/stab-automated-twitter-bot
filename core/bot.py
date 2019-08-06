@@ -144,11 +144,12 @@ class Bot(object):
     def unfollow_batch(self, target_number: int = 50, strategy: str = "random") -> List[tweepy.models.User]:
         """
         Unfollow target_number of users based on a strategy
-        :param target_number: number of users to follow (maximum 100)
+        :param target_number: number of users to follow (maximum 200)
         :param strategy: the strategy to use ('random' or 'popularity', 'latest')
         :return: list of unfollowed users
         """
-        followers = self.api.followers()
+        target_number = min(target_number, 200)
+        followers = list(tweepy.Cursor(self.api.friends).items(target_number))
         if strategy == "popularity":
             followers.sort(key=lambda user: user.followers_count)
         elif strategy == "random":
